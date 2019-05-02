@@ -44,13 +44,12 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
-            'hash' => false,
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | Users Providers
     |--------------------------------------------------------------------------
     |
     | All authentication drivers have a user provider. This defines how the
@@ -68,13 +67,13 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+//         'users' => [
+//             'driver' => 'database',
+//             'table' => 'user',
+//         ],
     ],
 
     /*

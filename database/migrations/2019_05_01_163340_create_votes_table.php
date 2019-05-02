@@ -13,7 +13,7 @@ class CreateVotesTable extends Migration
      */
     public function up()
     {
-        Schema::create('votes', function (Blueprint $table) {
+        Schema::create('vote', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ class CreateVotesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('votes');
+        Schema::dropIfExists('vote');
     }
 }

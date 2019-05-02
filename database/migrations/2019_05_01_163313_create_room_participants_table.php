@@ -13,7 +13,7 @@ class CreateRoomParticipantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('room_participants', function (Blueprint $table) {
+        Schema::create('room_participant', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ class CreateRoomParticipantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('room_participants');
+        Schema::dropIfExists('room_participant');
     }
 }
