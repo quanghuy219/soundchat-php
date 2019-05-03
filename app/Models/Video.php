@@ -3,14 +3,14 @@
 namespace App\Models;
 
 
-class Media extends BaseModel
+class Video extends BaseModel
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'media';
+    protected $table = 'videos';
 
 
 }

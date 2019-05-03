@@ -19,4 +19,7 @@ Route::post('/login', 'UserController@authenticate');
 
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/user', 'UserController@getAuthenticatedUser');
+    Route::post('/messages', 'MessageController@sendNewMessage');
 });
+Route::middleware('jwt.verify')->post('/pusher/auth', 'PusherController@auth');
+
