@@ -6,7 +6,7 @@ namespace App\Utils\Constants;
 
 use MyCLabs\Enum\Enum;
 
-class MediaStatus extends Enum
+class VideoStatus extends Enum
 {
     const ACTIVE = 'active';
     const DELETED = 'deleted';

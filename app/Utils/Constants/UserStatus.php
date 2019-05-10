@@ -3,6 +3,7 @@
 
 namespace App\Utils\Constants;
 
+
 use MyCLabs\Enum\Enum;
 
 class UserStatus extends Enum
