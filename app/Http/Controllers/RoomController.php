@@ -14,6 +14,7 @@ use App\Utils\Constants\VideoStatus;
 use App\Utils\Constants\VoteStatus;
 use App\Utils\Helper;
 use function foo\func;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -100,4 +101,34 @@ class RoomController extends Controller
         ], 200);
     }
 
+    public function joinRoomByFingerprint(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'fingerprint' => 'required|string',
+        ]);
+        if($validator->fails()){
+            return response()->json(["errors" => $validator->errors()], 400);
+        }
+
+        $user = $request->get('user');
+        $fingerprint = $request->get('fingerprint');
+        $room = Room::where('fingerprint', $fingerprint)->first();
+        if (!$room)
+            throw new Error(400, 'Invalid room fingerprint');
+
+        $participant = RoomParticipant::where('user_id', $user->getUserID())->where('room_id', $room->id)->first();
+        if (!$participant) {
+            $participant = new RoomParticipant([
+                'user_id' => $user->getUserID(),
+                'room_id' => $room->id,
+                'status' => ParticipantStatus::IN
+            ]);
+        } else {
+            $participant->status = ParticipantStatus::IN;
+        }
+        $participant->save();
+        return response()->json([
+            'message' => 'Joining room successfully',
+            'data' => $room
+        ], 200);
+    }
 }
