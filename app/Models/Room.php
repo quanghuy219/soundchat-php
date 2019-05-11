@@ -2,10 +2,30 @@
 
 namespace App\Models;
 
+use App\Utils\Constants\RoomStatus;
+
 
 class Room extends BaseModel
 {
     protected $table = 'rooms';
+
+    const CREATED_AT = 'created';
+    const UPDATED_AT = 'updated';
+
+    protected $primaryKey = ['id'];
+    protected $fillable = [
+        'name', 'creator_id', 'current_video', 'video_time', 'fingerprint'
+    ];
+
+    protected $hidden = [
+        'created', 'updated', 'status'
+    ];
+
+    protected $attributes = [
+        'status' => RoomStatus::ACTIVE,
+    ];
+
+
 
     public function messages()
     {
