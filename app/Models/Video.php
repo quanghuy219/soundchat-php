@@ -12,10 +12,6 @@ class Video extends BaseModel
      */
     protected $table = 'videos';
 
-    const CREATED_AT = 'created';
-    const UPDATED_AT = 'updated';
-
-
     protected $primaryKey = ['id'];
     
     protected $fillable = ['creator_id', 'room_id', 'url', 'total_vote'];

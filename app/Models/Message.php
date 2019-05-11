@@ -8,10 +8,6 @@ class Message extends BaseModel
 {
     protected $table = 'messages';
 
-    const CREATED_AT = 'created';
-    const UPDATED_AT = 'updated';
-
-
     protected $fillable = [
         'user_id', 'room_id', 'content'
     ];

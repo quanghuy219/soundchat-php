@@ -7,9 +7,6 @@ use App\Utils\Constants\VoteStatus;
 class Vote extends BaseModel
 {
     protected $table = 'votes';
-    
-    const CREATED_AT = 'created';
-    const UPDATED_AT = 'updated';
 
     protected $primaryKey = ['id'];
 

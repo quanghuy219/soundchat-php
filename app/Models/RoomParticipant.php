@@ -9,9 +9,6 @@ class RoomParticipant extends BaseModel
 {
     protected $table = 'room_participants';
 
-    const CREATED_AT = 'created';
-    const UPDATED_AT = 'updated';
-
     protected $primaryKey = ['user_id', 'room_id'];
 
     protected $attributes = [
