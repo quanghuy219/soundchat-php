@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Utils\Constants\ParticipantStatus;
 use App\Utils\Constants\MediaStatus;
+
+use App\Utils\Constants\ParticipantStatus;
 
 class RoomParticipant extends BaseModel
 {
