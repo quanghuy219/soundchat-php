@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Error;
+use App\Http\Services\VideoService;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\RoomParticipant;
@@ -20,6 +21,10 @@ use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
 {
+    /** Return list of room that user has joined
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getRoomList(Request $request) {
         $user = $request->get('user');
         $rooms = Room::whereHas('participants', function($participant) use ($user) {
@@ -36,7 +41,7 @@ class RoomController extends Controller
             'name' => 'required|string',
         ]);
         if($validator->fails()){
-            return response()->json(["errors" => $validator->errors()], 400);
+            return response()->json(["error_data" => $validator->errors()], 400);
         }
 
         $user = $request->get('user');
@@ -106,7 +111,7 @@ class RoomController extends Controller
             'fingerprint' => 'required|string',
         ]);
         if($validator->fails()){
-            return response()->json(["errors" => $validator->errors()], 400);
+            return response()->json(["error_data" => $validator->errors()], 400);
         }
 
         $user = $request->get('user');
@@ -130,5 +135,51 @@ class RoomController extends Controller
             'message' => 'Joining room successfully',
             'data' => $room
         ], 200);
+    }
+
+
+    public function getVideoInRoom(Request $request, $id) {
+        $validator = Validator::make($request->all(), [
+            'type' => 'required|string|in:current,next',
+        ]);
+        if($validator->fails()){
+            return response()->json(["error_data" => $validator->errors()], 400);
+        }
+        $user = $request->get('user');
+
+        // Only room participant can get video data
+        $participant = RoomParticipant::where('user_id', $user->getUserID())
+            ->where('room_id', $id)
+            ->first();
+        if(!$participant) {
+            throw new Error(400, 'You are not a member of this room');
+        }
+        $type = $request->get('type');
+
+        if ($type == 'current') {
+            $currentVideo = VideoService::getCurrentVideo($id);
+            if (!$currentVideo)
+                return response()->json([
+                    'message' => 'There is no available video'
+                ], 200);
+
+            return response()->json([
+                'message' => 'Get current video successfully',
+                'data' => $currentVideo
+            ], 200);
+        } else {
+            $nextVideo = VideoService::getNextVideo($id);
+            if (!$nextVideo)
+                return response()->json([
+                    'message' => 'There is no available song'
+                ], 200);
+
+            return response()->json([
+                'message' => 'Get next video successfully',
+                'data' => $nextVideo
+            ], 200);
+        }
+
+
     }
 }
