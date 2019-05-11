@@ -25,6 +25,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/rooms', 'RoomController@createNewRoom');
     Route::post('/rooms/fingerprint', 'RoomController@joinRoomByFingerprint');
     Route::get('/rooms/{id}/videos', 'RoomController@getVideoInRoom');
+    Route::put('/rooms/{id}/videos', 'RoomController@updateVideoStatus');
 });
 Route::middleware('jwt.verify')->post('/pusher/auth', 'PusherController@auth');
 
