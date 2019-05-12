@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\VideoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,14 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/rooms/{id}', 'RoomController@getRoomInformation');
     Route::post('/rooms', 'RoomController@createNewRoom');
     Route::post('/rooms/fingerprint', 'RoomController@joinRoomByFingerprint');
+    Route::get('/videos', 'VideoController@getNextVideo');
+    Route::post('/videos', 'VideoController@addNewVideo');
+    Route::post('/videos/{video_id}/vote', 'VideoController@upVote');
+    Route::put('/videos/{video_id}/vote', 'VideoController@downVote');    
 });
+
+
+
+
 Route::middleware('jwt.verify')->post('/pusher/auth', 'PusherController@auth');
 
