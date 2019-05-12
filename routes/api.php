@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 // Register new user
 Route::post('/users', 'UserController@register');
 Route::post('/login', 'UserController@authenticate');
-
+Route::post('/pusher/webhook', 'PusherController@handlePusherWebhook');
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/user', 'UserController@getAuthenticatedUser');
     Route::post('/messages', 'MessageController@sendNewMessage');
