@@ -29,6 +29,8 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/videos', 'VideoController@addNewVideo');
     Route::post('/videos/{video_id}/vote', 'VideoController@upVote');
     Route::put('/videos/{video_id}/vote', 'VideoController@downVote');    
+    Route::get('/rooms/{id}/videos', 'RoomController@getVideoInRoom');
+    Route::put('/rooms/{id}/videos', 'RoomController@updateVideoStatus');
 });
 
 
