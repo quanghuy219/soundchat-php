@@ -13,6 +13,9 @@ use App\Utils\Constants\ParticipantStatus;
 use App\Utils\Helper;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\Error;
+use App\Events\NewVideo;
+use App\Events\UpVote;
+use App\Events\DownVote;
 
 class VideoController extends Controller
 {
@@ -47,7 +50,13 @@ class VideoController extends Controller
 
         $new_video->fill($data);
         $new_video->save();
+
+        event (new NewVideo($new_video));
         
+        if (!$room->current_video)
+        {
+            
+        }
         return response() -> json([
             'message' => 'new video is added', 
             'data' => $new_video
@@ -91,6 +100,8 @@ class VideoController extends Controller
             $video->total_vote += 1;
             $video->save();
 
+            event (new UpVote($user, $video));
+
             return response() -> json([
                 'message' => 'up-voted successfully', 
                 'data' => $video
@@ -104,6 +115,8 @@ class VideoController extends Controller
             $video->total_vote += 1;
             $video->save();
             
+            event (new UpVote($user, $video));
+
             return response() -> json([
                 'message' => 'up-voted successfully', 
                 'data' => $video
@@ -150,6 +163,8 @@ class VideoController extends Controller
 
             $video->total_vote -= 1;
             $video->save();
+
+            event (new DownVote($user, $video));
             
             return response() -> json([
                 'message' => 'down-voted successfully', 
