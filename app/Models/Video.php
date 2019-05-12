@@ -11,12 +11,8 @@ class Video extends BaseModel
      * @var string
      */
     protected $table = 'videos';
-
-    protected $primaryKey = ['id'];
     
     protected $fillable = ['creator_id', 'room_id', 'url', 'total_vote'];
-
-    protected $hidden = ['created', 'updated', 'status'];
 
     protected $attributes = [
         'status' => VideoStatus::VOTING,

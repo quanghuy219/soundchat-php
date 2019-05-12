@@ -2,22 +2,27 @@
 
 namespace App\Models;
 
+
 use App\Utils\Constants\RoomStatus;
 
 class Room extends BaseModel
 {
     protected $table = 'rooms';
 
-    protected $primaryKey = ['id'];
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'name', 'creator_id', 'current_video', 'video_time', 'fingerprint'
+        'name', 'creator_id', 'fingerprint'
     ];
 
-    protected $hidden = [
-        'created', 'updated', 'status'
-    ];
-
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
     protected $attributes = [
         'status' => RoomStatus::ACTIVE,
     ];

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Video;
 use App\Models\Room;
-use App\Models\User;
 use App\Models\Vote;
 use App\Models\RoomParticipant;
 use App\Utils\Constants\VideoStatus;
@@ -13,9 +12,7 @@ use App\Utils\Constants\VoteStatus;
 use App\Utils\Constants\ParticipantStatus;
 use App\Utils\Helper;
 use Illuminate\Support\Facades\Validator;
-use App\Utils\Constants\RoomStatus;
-use PhpOption\None;
-use phpDocumentor\Reflection\Types\Null_;
+use App\Exceptions\Error;
 
 class VideoController extends Controller
 {
@@ -35,18 +32,20 @@ class VideoController extends Controller
             throw new Error(400, 'Invalid room id');
         $participant = RoomParticipant::where([
             ['room_id', $roomID],
-            ['creator_id', $userID],
-        ])->get();
-        if (!$participant || $participant->status != ParticipantStatus::IN)
+            ['user_id', $userID],
+        ])->first();
+        if ( $participant->status != ParticipantStatus::IN)
             throw new Error(400,'Cannot add video');
-        $new_video = new Video([
+            
+        $new_video = new Video;
+        $data = [
             'url' => $request->get('url'),
             'creator_id' => $userID,
             'room_id' => $roomID,
-            'status' => VideoStatus::VOTING,
             'total_vote' => 1
-        ]);
+        ];
 
+        $new_video->fill($data);
         $new_video->save();
         
         return response() -> json([
@@ -69,23 +68,24 @@ class VideoController extends Controller
         $userID = $user->getUserID();
         $participant = RoomParticipant::where([
             ['room_id', $video->room_id],
-            ['creator_id', $userID],
-        ])->get();
+            ['user_id', $userID],
+        ])->first();
         if (!$participant || $participant->status != ParticipantStatus::IN)
             throw new Error(400,'Forbidden to vote for this video');
         
         $vote = Vote::where([
             ['user_id', $userID],
             ['video_id', $video_id],
-        ])->get();
+        ])->first();
 
         if (!$vote){ 
-            $new_vote = new Vote([
+            $new_vote = new Vote;
+            $data = [
                 'user_id' => $userID, 
-                'video_id' => $video_id,
-                'status' => VoteStatus::UPVOTE,
-            ]);
+                'video_id' => $video_id
+            ];
 
+            $new_vote->fill($data);
             $new_vote->save();
             
             $video->total_vote += 1;
@@ -130,15 +130,15 @@ class VideoController extends Controller
         $userID = $user->getUserID();
         $participant = RoomParticipant::where([
             ['room_id', $video->room_id],
-            ['creator_id', $userID],
-        ])->get();
+            ['user_id', $userID],
+        ])->first();
         if (!$participant || $participant->status != ParticipantStatus::IN)
             throw new Error(400,'Forbidden to vote for this video');
         
         $vote = Vote::where([
             ['user_id', $userID],
             ['video_id', $video_id],
-        ])->get();
+        ])->first();
 
         if (!$vote){ 
             throw new Error(400, 'Need to up-vote first');
@@ -170,7 +170,7 @@ class VideoController extends Controller
         $participant = RoomParticipant::where([
             ['user_id', $userID],
             ['room_id', $roomID],
-        ])->get();
+        ])->first();
 
         if (!$participant || $participant->status != ParticipantStatus::IN){
             throw new Error(400, 'you are not a member of this room');

@@ -8,11 +8,7 @@ class Vote extends BaseModel
 {
     protected $table = 'votes';
 
-    protected $primaryKey = ['id'];
-
     protected $fillable = ['video_id', 'user_id'];
-
-    protected $hidden = ['created', 'updated', 'status'];
 
     protected $attributes = [
         'status' => VoteStatus::UPVOTE,
