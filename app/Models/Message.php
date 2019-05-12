@@ -12,16 +12,21 @@ class Message extends BaseModel
         'user_id', 'room_id', 'content'
     ];
 
-    protected $hidden = [
-        'status', 'created', 'updated'
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'status' => 'active',
     ];
 
-    public function user() {
-        return $this -> morphTo();
+    public function room() {
+        return $this->belongsTo(Room::class);
     }
 
-    public function room() {
-        return $this -> morphTo();
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
-    
 }
