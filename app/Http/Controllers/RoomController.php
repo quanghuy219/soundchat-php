@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ExitParticpant;
+use App\Events\NewParticipant;
 use App\Events\Proceed;
 use App\Events\VideoStatusChanged;
 use App\Exceptions\Error;
@@ -9,6 +11,7 @@ use App\Http\Services\VideoService;
 use App\Models\Message;
 use App\Models\Room;
 use App\Models\RoomParticipant;
+use App\Models\User;
 use App\Models\Video;
 use App\Models\Vote;
 use App\Utils\Constants\ParticipantStatus;
@@ -16,8 +19,6 @@ use App\Utils\Constants\RoomStatus;
 use App\Utils\Constants\VideoStatus;
 use App\Utils\Constants\VoteStatus;
 use App\Utils\Helper;
-use function foo\func;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -137,6 +138,81 @@ class RoomController extends Controller
             'message' => 'Joining room successfully',
             'data' => $room
         ], 200);
+    }
+
+    public function addMemberByEmail(Request $request, $roomId) {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+        if($validator->fails()){
+            return response()->json(["error_data" => $validator->errors()], 400);
+        }
+
+        $room = Room::find($roomId);
+        if (!$room) {
+            throw new Error(400, 'This is an invalid room');
+        }
+        $user = $request->get('user');
+        $requester = RoomParticipant::where('room_id', $roomId)->where('user_id', $user->getUserID())->first();
+
+        if (!$requester || $requester->status == ParticipantStatus::DELETED)
+            throw new Error(400, 'You\'re not allowed to add new member to this room');
+
+        $addedUser = User::where('email', $request->get('email'))->first();
+        if (!$addedUser)
+            throw new Error(400, 'This user does not exist');
+
+        $participant = RoomParticipant::where('room_id', $roomId)->where('user_id', $addedUser->getUserID())->first();
+
+        if (!$participant) {
+            $participant =  RoomParticipant::create([
+                'user_id' => $addedUser->getUserID(),
+                'room_id' => $roomId,
+                'status' => ParticipantStatus::OUT
+            ]);
+            $participant->save();
+
+            event(new NewParticipant($roomId, $addedUser->name, $addedUser->email, $addedUser->getUserID()));
+
+            return response()->json([
+                'message' => 'New participant to the room is created',
+                'data' => $participant
+            ], 200);
+        } else if ($participant->status == ParticipantStatus::DELETED) {
+            $participant->status = ParticipantStatus::OUT;
+            $participant->save();
+            event(new NewParticipant($roomId, $addedUser->name, $addedUser->email, $addedUser->getUserID()));
+            return response()->json([
+                'message' => 'New participant to the room is created',
+                'data' => $participant
+            ], 200);
+        }
+
+        throw new Error(400, 'This user is already a member of this room');
+    }
+
+    public function userExitFromRoom(Request $request, $roomId) {
+        $room = Room::find($roomId);
+        if (!$room) {
+            throw new Error(400, 'This is an invalid room');
+        }
+
+        $user = $request->get('user');
+
+        $participant = RoomParticipant::where('room_id', $roomId)->where('user_id', $user->getUserID())->first();
+        if (!$participant || $participant->status == ParticipantStatus::DELETED)
+            throw new Error(400, 'You are not member of this room');
+
+        if ($participant->status == ParticipantStatus::IN) {
+            $participant->status = ParticipantStatus::OUT;
+            $participant->save();
+            event(new ExitParticpant($roomId, $user->name, $user->getUserID()));
+            return response()->json([
+                'message' => 'Participant exited successfully'
+            ], 200);
+        }
+
+        throw new Error(401, 'participant failed to exit');
     }
 
 
