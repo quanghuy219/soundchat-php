@@ -4,22 +4,28 @@ namespace App\Events;
 
 use App\Utils\Constants\PusherEvent;
 
-class NewMessage extends BaseEvent
+class NewVideo extends BaseEvent
 {
-    public $video; 
+    public $url; 
+    public $status; 
+    public $creator_id;
+    public $total_vote;
 
     /**
      * Create a new event instance.
      * @param video
-     * @return void
      */
 
     public function __construct($video)
     {
-        $this->video = $video;
+        $this->url = $video->getAttribute('url');
+        $this->status = $video->getAttribute('status'); 
+        $this->creator_id = $video->getAttribute('creator_id');
+        $this->room_id = $video->getAttribute('room_id');
+        $this->total_vote = $video->getAttribute('total_vote');
     }
 
     public function broadcastAs() {
-        return PusherEvent::NEW_MEDIA;
+        return PusherEvent::NEW_VIDEO;
     }
 }

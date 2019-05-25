@@ -14,7 +14,7 @@ class PusherEvent extends Enum
     const DELETE_PARTICIPANT = 'delete_participant';
     const UP_VOTE = 'up_vote';
     const DOWN_VOTE = 'down_vote';
-    const NEW_MEDIA = 'new_media';
+    const NEW_VIDEO = 'new_video';
     const VIDEO_STATUS_CHANGED = 'video_status_changed';
     const PROCEED = 'proceed';
 }

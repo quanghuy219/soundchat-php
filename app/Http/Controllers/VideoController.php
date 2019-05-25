@@ -16,6 +16,8 @@ use App\Exceptions\Error;
 use App\Events\NewVideo;
 use App\Events\UpVote;
 use App\Events\DownVote;
+use App\Http\Services\VideoService;
+use App\Events\Proceed;
 
 class VideoController extends Controller
 {
@@ -55,7 +57,10 @@ class VideoController extends Controller
         
         if (!$room->current_video)
         {
-            
+            $new_video->status = VideoStatus::PLAYING;
+            $room->current_video = VideoService::setCurrentVideo($roomID);
+            $current_video = $room->current_video;
+            event (new Proceed($roomID, $current_video->url, $current_video->video_time, $current_video->status));
         }
         return response() -> json([
             'message' => 'new video is added', 
