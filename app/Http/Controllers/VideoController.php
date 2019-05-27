@@ -58,8 +58,8 @@ class VideoController extends Controller
         if (!$room->current_video)
         {
             $new_video->status = VideoStatus::PLAYING;
-            $room->current_video = VideoService::setCurrentVideo($roomID);
-            $current_video = $room->current_video;
+            $new_video->save();
+            $current_video = VideoService::setCurrentVideo($roomID);
             event (new Proceed($roomID, $current_video->url, $current_video->video_time, $current_video->status));
         }
         return response() -> json([
