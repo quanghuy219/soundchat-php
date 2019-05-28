@@ -86,7 +86,7 @@ class RoomController extends Controller
         }
 
         $roomParticipants = RoomParticipant::with('user')->where('room_id', $id)->get();
-        $messages = Message::where('room_id', $id)->get();
+        $messages = Message::with('user')->where('room_id', $id)->get();
         $videos = Video::where('room_id', '=', $id)->where('status', '=', VideoStatus::VOTING)->get();
         foreach ($videos as $video) {
             $vote = Vote::where('video_id', $video->id)->where('user_id', $user->getUserID())
