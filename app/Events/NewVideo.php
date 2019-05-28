@@ -6,6 +6,7 @@ use App\Utils\Constants\PusherEvent;
 
 class NewVideo extends BaseEvent
 {
+    public $id;
     public $url; 
     public $status; 
     public $creator_id;
@@ -18,6 +19,7 @@ class NewVideo extends BaseEvent
 
     public function __construct($video)
     {
+        $this->id = $video->getAttribute('id');
         $this->url = $video->getAttribute('url');
         $this->status = $video->getAttribute('status'); 
         $this->creator_id = $video->getAttribute('creator_id');
