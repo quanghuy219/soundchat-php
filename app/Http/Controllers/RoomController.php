@@ -315,14 +315,13 @@ class RoomController extends Controller
             throw new Error(400, 'This is an invalid room');
         }
         $user = $request->get('user');
-        $roomMember = RoomParticipant::where('room_id', $roomId)->where('user_id', $user->getUserID())->first();
+        $roomMember = RoomParticipant::where('room_id', $roomId)->where('user_id', $user->getUserID());
 
-        if (!$roomMember) {
+        if (!$roomMember->first()) {
             throw new Error(400, 'You are not member of this room');
         }
 
-        $roomMember->video_status = $status;
-        $roomMember->save();
+        $roomMember->update(['video_status' => $status]);
 
         if (VideoService::checkAllUserHaveSameVideoStatus($roomId, VideoStatus::READY)) {
             $currentVideo = VideoService::getCurrentVideo($roomId);
@@ -401,15 +400,17 @@ class RoomController extends Controller
             throw new Error(400, 'This is an invalid room');
         }
         $user = $request->get('user');
-        $roomMember = RoomParticipant::where('room_id', $roomId)->where('user_id', $user->getUserID())->first();
+        $roomMember = RoomParticipant::where('user_id', $user->getUserID())->where('room_id', $roomId);
 
-        if (!$roomMember) {
+        if (!$roomMember->first()) {
             throw new Error(400, 'You are not member of this room');
         }
         $room->video_time = $request->get('video_time');
         $room->save();
-        $roomMember->video_status = $status;
-        $roomMember->save();
+//        $roomMember->video_status = $status;
+//
+        $roomMember->update(['video_status' => $status]);
+
 
         if (VideoService::checkAllUserHaveSameVideoStatus($roomId, VideoStatus::FINISHED)) {
             $currentVideo = Video::where('id', $room->current_video)->first();
@@ -425,9 +426,8 @@ class RoomController extends Controller
                 $url = $nextVideo->getAttribute('url');
             }
             // Publish event to all user in the room
-            event(new Proceed($roomId, $url, 0, VideoStatus::PAUSING));
-            VideoService::setOnlineUsersVideoStatus($roomId, VideoStatus::PLAYING);
-            $room->status = VideoStatus::PLAYING;
+            event(new Proceed($roomId, $url, 0, VideoStatus::PAUSING, $nextVideo->id));
+            $room->status = VideoStatus::PAUSING;
             $room->save();
         }
     }

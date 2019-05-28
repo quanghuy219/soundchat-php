@@ -45,6 +45,8 @@ class VideoService
             $nextVideo = self::getNextVideo($roomId);
             if ($nextVideo)
                 $currentVideoId = $nextVideo->id;
+                $nextVideo->status = VideoStatus::PLAYING;
+                $nextVideo->save();
         }
         $room = Room::where('id', $roomId)->first();
         $room->current_video = $currentVideoId;
@@ -77,5 +79,6 @@ class VideoService
             return;
 
         $query->update(['video_status' => $videoStatus]);
+
     }
 }
