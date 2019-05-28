@@ -27,7 +27,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('/rooms/fingerprint', 'RoomController@joinRoomByFingerprint');
     Route::post('/videos', 'VideoController@addNewVideo');
     Route::post('/videos/{video_id}/vote', 'VideoController@upVote');
-    Route::put('/videos/{video_id}/vote', 'VideoController@downVote');    
+    Route::delete('/videos/{video_id}/vote', 'VideoController@downVote');
     Route::post('/rooms/{id}/users', 'RoomController@addMemberByEmail');
     Route::put('/rooms/{id}/users', 'RoomController@userExitFromRoom');
     Route::get('/rooms/{id}/videos', 'RoomController@getVideoInRoom');
@@ -35,7 +35,4 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 });
 
 
-
-
 Route::middleware('jwt.verify')->post('/pusher/auth', 'PusherController@auth');
-
