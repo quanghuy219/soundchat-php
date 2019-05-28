@@ -40,7 +40,7 @@ class VideoService
         return $nextVideo;
     }
 
-    public static  function setCurrentVideo($roomId, $currentVideoId = null, $videoTime = 0, $status = VideoStatus::PAUSING) {
+    public static function setCurrentVideo($roomId, $currentVideoId=null, $videoTime=0, $status=VideoStatus::PAUSING) {
         if (!$currentVideoId) {
             $nextVideo = self::getNextVideo($roomId);
             if ($nextVideo)
