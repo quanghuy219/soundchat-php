@@ -12,8 +12,9 @@ class UpVote extends BaseEvent
     public $video_id;
     public $total_vote; 
 
-    public function __construct($user, $video)
+    public function __construct($room_id, $user, $video)
     {
+        $this->room_id = $room_id;
         $this->user_name = $user->getAttribute('name');
         $this->video_id = $video->getAttribute('id');
         $this->total_vote = $video->getAttribute('total_vote');

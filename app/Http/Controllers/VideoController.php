@@ -80,13 +80,13 @@ class VideoController extends Controller
 
         $user = $request->get('user');
         $userID = $user->getUserID();
+        $roomID = $video->room_id;
         $participant = RoomParticipant::where([
             ['room_id', $video->room_id],
             ['user_id', $userID],
         ])->first();
         if (!$participant || $participant->status != ParticipantStatus::IN)
             throw new Error(400,'Forbidden to vote for this video');
-        
         $vote = Vote::where([
             ['user_id', $userID],
             ['video_id', $video_id],
@@ -105,7 +105,7 @@ class VideoController extends Controller
             $video->total_vote += 1;
             $video->save();
 
-            event (new UpVote($user, $video));
+            event (new UpVote($roomID, $user, $video));
 
             return response() -> json([
                 'message' => 'up-voted successfully', 
@@ -120,7 +120,7 @@ class VideoController extends Controller
             $video->total_vote += 1;
             $video->save();
             
-            event (new UpVote($user, $video));
+            event (new UpVote($roomID, $user, $video));
 
             return response() -> json([
                 'message' => 'up-voted successfully', 
@@ -146,6 +146,7 @@ class VideoController extends Controller
 
         $user = $request->get('user');
         $userID = $user->getUserID();
+        $roomID = $video->room_id;
         $participant = RoomParticipant::where([
             ['room_id', $video->room_id],
             ['user_id', $userID],
@@ -169,7 +170,7 @@ class VideoController extends Controller
             $video->total_vote -= 1;
             $video->save();
 
-            event (new DownVote($user, $video));
+            event (new DownVote($roomID, $user, $video));
             
             return response() -> json([
                 'message' => 'down-voted successfully', 
